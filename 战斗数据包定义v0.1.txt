@@ -1,0 +1,103 @@
+﻿### 顶层包
+
+# 待加入：地图点和掉落信息
+
+#战斗包 - 正常
+{
+"datetime" : int,                               # 打包完成时的unix time，单位毫秒
+"kcdata_api_deck@pre_battle" : {...},           # 战斗前舰队信息
+"api_req_sortie/battle" : {...},                # 昼战封包，直接发原始包
+"api_req_battle_midnight/battle" : {...},       # 夜战封包，直接发原始包，不存在则不写本条目
+"kcdata_api_deck@post_battle" : {...}           # 战斗后舰队信息更新
+}
+
+#战斗包 - 开场夜战
+{
+"datetime" : int,                               # 打包完成时的unix time，单位毫秒
+"kcdata_api_deck@pre_battle" : {...},           # 战斗前舰队信息
+"api_req_battle_midnight/sp_midnight" : {...},  # 开场夜战封包，直接发原始包
+"kcdata_api_deck@post_battle" : {...}           # 战斗后舰队信息更新
+}
+
+#战斗包 - 航空战
+{
+"datetime" : int,                               # 打包完成时的unix time，单位毫秒
+"kcdata_api_deck@pre_battle" : {...},           # 战斗前舰队信息
+"api_req_sortie/airbattle" : {...},             # 航空战战封包，直接发原始包
+"api_req_battle_midnight/battle" : {...},       # 夜战封包，直接发原始包，不存在则不写本条目
+"kcdata_api_deck@post_battle" : {...}           # 战斗后舰队信息更新
+}
+
+### 各部分具体定义
+
+##
+# kcdata_api_deck@pre_battle 定义
+# 需要从客户端读取后assemble
+# 部分信息如果客户端没有在出击过程中维护的话需要手动截封包
+##
+{
+# 出击舰队成员信息
+"kcdata_api_ship_sally_deck" : [
+    {
+        # 人物ID
+        # 不同舰队舰娘人物ID可能相同
+        # 主要来源是api_port/port.api_ship.api_ship_id
+        # 注意不同地方的api_ship_id可能指舰娘唯一识别ID而非人物ID
+	
+        #07/20/2015
+        #唯一识别ID(一个船实体)是api_ship_id
+        #人物ID(这里指船的ID，船与船实体呈一对多关系，比如说'吹雪'这个船对应多个吹雪的实体)是api_sortno
+
+        "char_id" : int,
+        
+        "remodel_lvl" : int,    # 改造次数（改一，改二，drei等）
+        "lvl" : int,            # 等级
+        "cond" : int,           # 疲劳/士气
+        "hp" : int,             # 当前血量
+        "firepower" : int,      # 火  （均为计算近代化改修且计算装备的实际值）
+        "torpedo" : int,        # 雷
+        "antiair" : int,        # 空
+        "armor" : int,          # 甲
+        "luck" : int,           # 运
+        
+        "fuel" : int,           # 当前油料
+        "bull" : int,           # 当前弹药
+        
+        "items" : [
+            {
+            "id" : int,             # 物品ID, 例如所有46 炮共用同一个ID
+            "star" : int,           # 改修等级
+            "onslot" : int,         # 当前搭载量
+            }
+            # 最大重复4次
+        ]
+    }
+    # 最大重复6次
+]
+
+# 支援舰队信息 不存在则无此条目
+"kcdata_api_ship_support_deck" : [...]
+
+##
+# kcdata_api_deck@post_battle 定义
+# 需要从客户端读取后assemble
+# 部分信息如果客户端没有在出击过程中维护的话需要手动截封包
+##
+{
+"kcdata_api_ship_sally_deck" : [
+    {
+    "char_id" : int,        # 人物ID，其实没必要，但是作为数据一致性的冗余校验用
+    "items" : [
+        {
+        "id" : int,         # 物品ID, 例如所有46 炮共用同一个ID
+        "star" : int,       # 改修等级
+        "onslot" : int,     # 当前搭载量
+        }
+        # 最大重复4次
+        ]
+    ]
+    }
+    # 最大重复6次
+}
+
+
