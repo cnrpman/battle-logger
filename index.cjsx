@@ -7,24 +7,17 @@ ROOT = __dirname
 
 ## ## Status Seg ## ##
 after_battle       = false
-
 deck_main_id       = -1
 deck_subfleet_id   = -1
 deck_support_id    = -1
-
 battle_package     = {}
 
 status_init = ()->
   after_battle       = false
-
   deck_main_id       = -1
   deck_subfleet_id   = -1
   deck_support_id    = -1
-
   battle_package     = {}
-
-kcdata_api_deck_at_pre_battle = {}
-kcdata_api_deck_at_pre_battle = {}
 
 ## ## Listener ## ##
 window.addEventListener 'game.response', (e) ->
@@ -124,8 +117,6 @@ window.addEventListener 'game.response', (e) ->
         fs.writeFileSync path_ex.join(ROOT,battle_package.datetime+'.json'),JSON.stringify(battle_package)
 
         status_init()
-
-console.log 'battle-logger: listener set'
 
 module.exports =
   name: 'BattleLogger'
