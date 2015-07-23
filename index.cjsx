@@ -1,26 +1,30 @@
 fs = require 'fs-extra'
+path_ex = require 'path-extra'
 
 {_, SERVER_HOSTNAME} = window
 ROOT = __dirname
 ## ## Predef Seg ## ##
 
 ## ## Status Seg ## ##
-after_battle = false
+after_battle       = false
 
 deck_main_id       = -1
 deck_subfleet_id   = -1
 deck_support_id    = -1
 
+battle_package     = {}
+
 status_init = ()->
-  after_battle = false
+  after_battle       = false
+
   deck_main_id       = -1
   deck_subfleet_id   = -1
   deck_support_id    = -1
 
-kcdata_api_deck_at_pre_battle = {}
-kcdata_api_deck_at_pre_battle = {}
+  battle_package     = {}
 
-battle_package = {}
+kcdata_api_deck_at_pre_battle = {}
+kcdata_api_deck_at_pre_battle = {}
 
 ## ## Listener ## ##
 window.addEventListener 'game.response', (e) ->
@@ -39,7 +43,7 @@ window.addEventListener 'game.response', (e) ->
     get_ship = (ship_id) ->
       ship = _ships[ship_id]
       package_ship =
-        charId:      ship.api_sortno
+        charId:      ship.api_ship_id
         entityId:    ship.api_id
         lvl:         ship.api_lv
         cond:        ship.api_cond
@@ -72,7 +76,7 @@ window.addEventListener 'game.response', (e) ->
     get_ship = (ship_id) ->
       ship = _ships[ship_id]
       package_ship =
-        charId:      ship.api_sortno
+        charId:      ship.api_ship_id
         entityId:    ship.api_id
         items:       (get_item item_id,ship.api_onslot[i] for item_id,i in ship.api_slot when item_id isnt -1)
     get_deck = (deck_id) ->
@@ -117,11 +121,11 @@ window.addEventListener 'game.response', (e) ->
         battle_package.datetime = (new Date()).valueOf()
 
         console.log battle_package
-        fs.writeFileSync ROOT+'\\'+battle_package.datetime+'.json',JSON.stringify(battle_package)
+        fs.writeFileSync path_ex.join(ROOT,battle_package.datetime+'.json'),JSON.stringify(battle_package)
 
-        status_init
+        status_init()
 
-  console.log 'battle-logger: listener set'
+console.log 'battle-logger: listener set'
 
 module.exports =
   name: 'BattleLogger'
