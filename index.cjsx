@@ -113,10 +113,18 @@ window.addEventListener 'game.response', (e) ->
         battle_package.kcdata_api_deck_at_post_battle = get_item_decks_from_poi deck_main_id
         battle_package.datetime = (new Date()).valueOf()
 
-        console.log battle_package
-        fs.writeFileSync path_ex.join(ROOT,battle_package.datetime+'.json'),JSON.stringify(battle_package)
+        fs.writeFile(path_ex.join(ROOT,'records',battle_package.datetime+'.json'),JSON.stringify(battle_package),
+          (e) ->
+              console.error e if e
+        )
 
         status_init()
+
+## ## Directory ##
+fs.mkdir(path_ex.join(ROOT,'records'),
+  (e)->
+    console.log "Battle-Logger: mkdir failed. Records directory exist?" if e
+)
 
 module.exports =
   name: 'BattleLogger'
