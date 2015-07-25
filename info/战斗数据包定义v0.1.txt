@@ -1,4 +1,17 @@
-﻿### 顶层包
+﻿7.25修改:
+所有包都加入地图信息(用于筛选
+{
+"map_info":{
+mapAreaId: body.api_maparea_id
+mapInfoNo: body.api_mapinfo_no
+api_no:    body.api_no
+isBoss:    (body.api_no is body.api_bosscell_no or body.api_color_no is 5)
+}
+...
+...
+}
+
+### 顶层包
 
 # 待加入：地图点和掉落信息
 

@@ -1,10 +1,26 @@
 fs = require 'fs-extra'
 path_ex = require 'path-extra'
 
-{_, SERVER_HOSTNAME} = window
+{_, SERVER_HOSTNAME, _nickNameId} = window
 ROOT = __dirname
 ## ## Predef Seg ## ##
-
+dateToString = (date)->
+  month = date.getMonth() + 1
+  if month < 10
+    month = "0#{month}"
+  day = date.getDate()
+  if day < 10
+    day = "0#{day}"
+  hour = date.getHours()
+  if hour < 10
+    hour = "0#{hour}"
+  minute = date.getMinutes()
+  if minute < 10
+    minute = "0#{minute}"
+  second = date.getSeconds()
+  if second < 10
+    second = "0#{second}"
+  "#{date.getFullYear()}-#{month}-#{day}_#{hour}-#{minute}-#{second}"
 ## ## Status Seg ## ##
 after_battle       = false
 deck_main_id       = -1
@@ -104,16 +120,24 @@ window.addEventListener 'game.response', (e) ->
 
       array = path.match /\/kcsapi\/(.*)\/(.*)/
       battle_package[array[1]+'_'+array[2]] = body
-
+    when '/kcsapi/api_req_map/start','/kcsapi/api_req_map/next'
+      battle_package.mapInfo =
+        mapAreaId: body.api_maparea_id
+        mapInfoNo: body.api_mapinfo_no
+        api_no:    body.api_no
+        isBoss:    (body.api_no is body.api_bosscell_no or body.api_color_no is 5)
     when '/kcsapi/api_req_sortie/battleresult'
       battle_package.kcdata_api_deck_at_pre_battle = get_decks_from_poi deck_main_id,deck_support_id,deck_subfleet_id
 
     when '/kcsapi/api_port/port','/kcsapi/api_get_member/ship_deck'#拿载机量,然后保存
       if after_battle
         battle_package.kcdata_api_deck_at_post_battle = get_item_decks_from_poi deck_main_id
-        battle_package.datetime = (new Date()).valueOf()
+        current_time = new Date()
+        battle_package.datetime = current_time.valueOf()
 
-        fs.writeFile(path_ex.join(ROOT,'records',battle_package.datetime+'.json'),JSON.stringify(battle_package),
+        {mapAreaId,mapInfoNo,api_no,isBoss} = battle_package.mapInfo
+        log_name = "#{window._nickNameId}_#{mapAreaId}-#{mapInfoNo}_#{dateToString(current_time)}.json"
+        fs.writeFile(path_ex.join(APPDATA_PATH,'battle-records',log_name),JSON.stringify(battle_package),
           (e) ->
               console.error e if e
         )
@@ -121,9 +145,9 @@ window.addEventListener 'game.response', (e) ->
         status_init()
 
 ## ## Directory ##
-fs.mkdir(path_ex.join(ROOT,'records'),
+fs.mkdir(path_ex.join(APPDATA_PATH,'battle-records'),
   (e)->
-    console.log "Battle-Logger: mkdir failed. Records directory exist?" if e
+    console.error e if e
 )
 
 module.exports =
