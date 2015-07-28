@@ -20,7 +20,8 @@ dateToString = (date)->
   second = date.getSeconds()
   if second < 10
     second = "0#{second}"
-  "#{date.getFullYear()}-#{month}-#{day}_#{hour}-#{minute}-#{second}"
+  # "#{date.getFullYear()}-#{month}-#{day}_#{hour}-#{minute}-#{second}"
+  "#{date.getFullYear()}-#{month}-#{day}"
 ## ## Status Seg ## ##
 after_battle       = false
 deck_main_id       = -1
@@ -99,6 +100,14 @@ window.addEventListener 'game.response', (e) ->
 
 ## ## Logics ## ##
   switch path
+    when '/kcsapi/api_start2'#init
+      fs.mkdir(path_ex.join(APPDATA_PATH,'battle-records'),
+        (e)->
+          console.log 'battle-logger: dir_exist' if e
+      )
+
+      status_init()
+
     when '/kcsapi/api_req_sortie/battle','/kcsapi/api_req_sortie/airbattle'#只有日战/航空战有支援
       after_battle = true
       deck_main_id = body.api_dock_id - 1 #讲个笑话，娇喘的英语
@@ -120,12 +129,14 @@ window.addEventListener 'game.response', (e) ->
 
       array = path.match /\/kcsapi\/(.*)\/(.*)/
       battle_package[array[1]+'_'+array[2]] = body
+
     when '/kcsapi/api_req_map/start','/kcsapi/api_req_map/next'
       battle_package.mapInfo =
         mapAreaId: body.api_maparea_id
         mapInfoNo: body.api_mapinfo_no
         api_no:    body.api_no
         isBoss:    (body.api_no is body.api_bosscell_no or body.api_color_no is 5)
+        
     when '/kcsapi/api_req_sortie/battleresult'
       battle_package.kcdata_api_deck_at_pre_battle = get_decks_from_poi deck_main_id,deck_support_id,deck_subfleet_id
 
@@ -135,20 +146,14 @@ window.addEventListener 'game.response', (e) ->
         current_time = new Date()
         battle_package.datetime = current_time.valueOf()
 
-        {mapAreaId,mapInfoNo,api_no,isBoss} = battle_package.mapInfo
-        log_name = "#{window._nickNameId}_#{mapAreaId}-#{mapInfoNo}_#{dateToString(current_time)}.json"
-        fs.writeFile(path_ex.join(APPDATA_PATH,'battle-records',log_name),JSON.stringify(battle_package),
+        # {mapAreaId,mapInfoNo,api_no,isBoss} = battle_package.mapInfo
+        log_name = "#{window._nickNameId}_#{dateToString(current_time)}.log"
+        fs.appendFile(path_ex.join(APPDATA_PATH,'battle-records',log_name),JSON.stringify(battle_package)+'\n',
           (e) ->
               console.error e if e
         )
 
         status_init()
-
-## ## Directory ##
-fs.mkdir(path_ex.join(APPDATA_PATH,'battle-records'),
-  (e)->
-    console.error e if e
-)
 
 module.exports =
   name: 'BattleLogger'
