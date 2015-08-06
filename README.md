@@ -1,9 +1,9 @@
 # battle-logger  
 a plugin of Poi(a game client for KanColle).  
-## install ##  
+## install
 放入Poi的插件目录  
 win:`poi-v3.0.0-win32-x64\resources\app\plugins\`  
 mac:`poi.app/contents/Resources/app/plugins`  
-## record directory ##  
+## record directory
 `%APPDATA_PATH%/battle-logger`  
 sample: win:`C:\Users\<your name>\AppData\Roaming\poi\battle-records`
