@@ -5,5 +5,6 @@ a plugin of Poi(a game client for KanColle).
 win:`poi-v3.0.0-win32-x64\resources\app\plugins\`  
 mac:`poi.app/contents/Resources/app/plugins`  
 ## record directory
-`%APPDATA_PATH%/battle-logger`  
-sample: win:`C:\Users\<your name>\AppData\Roaming\poi\battle-records`
+`%APPDATA_PATH%/battle-records`  
+win:`C:\Users\<your name>\AppData\Roaming\poi\battle-records`  
+mac:`/.config/poi/battle-records`
