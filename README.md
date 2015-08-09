@@ -7,4 +7,5 @@ mac:`poi.app/contents/Resources/app/plugins`
 ## record directory
 `%APPDATA_PATH%/battle-records`  
 win:`C:\Users\<your name>\AppData\Roaming\poi\battle-records`  
-mac:`/.config/poi/battle-records`
+mac:`~/Library/Application Support/poi`  
+linux:`/.config/poi/battle-records`  
